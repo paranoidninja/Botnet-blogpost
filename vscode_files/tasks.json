@@ -1,0 +1,21 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build Code",
+            "type": "shell",
+            "command": "g++",
+            // "command": "i686-w64-mingw32-g++",
+            "args": [
+                //Compilation
+                // "-std=c++11", 
+                // "maldev.cpp", "-o", "maldev.exe", "-s", "-lws2_32", "-Wno-write-strings", "-fno-exceptions", "-fmerge-all-constants", "-static-libstdc++", "-static-libgcc"
+                "maldev_cmd.cpp", "-o", "maldev_cmd.exe", "-s", "-lws2_32", "-Wno-write-strings", "-fno-exceptions", "-fmerge-all-constants", "-static-libstdc++", "-static-libgcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
