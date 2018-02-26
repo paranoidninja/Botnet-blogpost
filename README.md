@@ -1,10 +1,10 @@
 # Botnet-blogpost
 This repo basically contains the code that was mentioned in the blogposts that was written by me:
 
-Part 1: http://niiconsulting.com/checkmate/2018/02/malware-development-welcome-dark-side-part-1/
+- Part 1: http://niiconsulting.com/checkmate/2018/02/malware-development-welcome-dark-side-part-1/
 
 
-Part 2:
+- Part 2:
     2-1. http://niiconsulting.com/checkmate/2018/02/malware-development-welcome-dark-side-part-2-1/
     2-2. http://niiconsulting.com/checkmate/2018/02/malware-development-welcome-dark-side-part-2-2/
 
